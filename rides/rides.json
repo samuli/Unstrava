@@ -1,0 +1,6 @@
+{
+  "layout": "../ride.njk",
+  "tags": "ride",
+  "debug": false,
+  "_permalink": false
+}

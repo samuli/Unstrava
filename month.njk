@@ -1,0 +1,72 @@
+---
+pagination: 
+ data: collections.contentByMonth
+ size: 1
+permalink: /{{ pagination.items[0] }}/index.html
+---
+
+{% extends "base.njk" %}
+
+{% block content %}
+<div><a href="{{ "/" | url }}">index</a></div>
+
+<div class="month-pagination">
+{%- set prev = pagination.page.previous -%}
+{%- if prev -%}
+<div class="link-prev"><a href="{{ prev }}">prev</a></div>
+{%- endif -%}
+
+<div>{{ page.url }}</div>
+
+{%- set next = pagination.page.next -%}
+{%- if next -%}
+<div class="link-next"><a href="{{ next }}" class="ml-2">next</a></div>
+{%- endif -%}
+</div>
+
+{%- set monthRides = collections.contentByMonth[page.url] %}
+{% summary monthRides %}
+{% binLegend %}
+
+<div>
+  <table>
+    <tr>
+      <td>{% summaryTotal %} km</td>
+      <td>{% summaryDuration %} h</td>
+      <td>{% summaryBins %}</td>
+    </tr>
+  </table>
+</div>
+<div>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Dist.</th>
+        <th>Dur.</th>
+        <th>Avg</th>
+        <th>Asc</th>
+        <th>C°</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for ride in monthRides %}
+      {%- set s = ride.data.sessions[0] %}
+      {%- if s.total_distance > 0 -%}
+        {%- set key = ride.data.tags | last %}
+        <tr>
+          <td class="{{ s.timestamp | dateClass }}">
+            <a href="/{{ ride.data.date | dateToStr('Y/MM/DD-HH:mm') }}.html">{{ s.timestamp | dateToStr }}</a>
+          </td>
+          <td>{{ s.total_distance | round(1) }}</td>
+          <td>{{ s.total_timer_time | durationToStr }}</td>
+          <td>{{ s.avg_speed | round(1) }}</td>
+          <td>+{{ (s.total_ascent * 1000) | round }}</td>
+          <td>{{ s.avg_temperature }}°</td>
+        </tr>
+      {%- endif -%}
+      {%- endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock content %}

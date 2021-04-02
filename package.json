@@ -1,0 +1,32 @@
+{
+  "name": "Unstrava",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "clean-css": "^4.2.3",
+    "eleventy": "^1.0.6",
+    "fit-file-parser": "^1.6.18",
+    "glob": "^7.1.6",
+    "html-minifier": "^4.0.0",
+    "js-yaml": "^3.13.1",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.28",
+    "svg-sprite": "^1.5.0",
+    "terser": "^4.6.13",
+    "util": "^0.12.3",
+    "vinyl": "^2.2.0",
+    "yargs": "^15.3.1"
+  },
+  "devDependencies": {
+    "@11ty/eleventy": "^0.11.0"
+  },
+  "scripts": {
+    "convert-fit": "node util/convert-fit.js --inDir=data --outDir=rides",
+    "start": "rm -drf public; ELEVENTY_ENV=development eleventy --serve --watch",
+    "start-prod": "rm -drf public; ELEVENTY_ENV=production eleventy --serve --watch",
+    "build": "rm -drf public; ELEVENTY_ENV=production eleventy",
+    "git-add-data": "git add gear rides/*.md public"
+  },
+  "keywords": [],
+  "author": ""
+}

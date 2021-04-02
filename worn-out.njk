@@ -1,0 +1,33 @@
+{% extends "base.njk" %}
+
+{% block content %}
+<div>
+  <h1>Gear - worn out</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>km used</th>
+        <th>Dur.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- set allRides = collections.ride %}
+      {%- for g in collections.gearWornOut %}
+        <tr>
+          <td>{{ g.data.title }}</td>
+          <td class="km">{% kmUsed allRides, g %}</td>
+          <td>
+            {%- for period in g.data.inUse %}
+              {% periodToStr period %}
+              {%- if not loop.last %}
+              ,
+              {%- endif %}
+            {%- endfor %}
+          </td>
+        </tr>
+      {%- endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

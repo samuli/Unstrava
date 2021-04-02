@@ -1,0 +1,152 @@
+
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    max-width: initial;
+    margin: 1em 0;
+}
+
+table {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+.gear table {
+    width: auto;
+}
+table th,
+table td {
+    text-align: right;
+    padding: 0.5em;
+    border-bottom: 1px solid #c0c0c0;
+}
+table tr:last-child td {
+    border: none;
+}
+
+.gear {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+.gear div:first-child {
+    margin-right: 1em;
+}
+
+.gear div {
+    flex: 1 1 0px;
+    //width: 50%;
+}
+@media (max-width: 600px) {
+    .gear {
+        flex-direction: column;
+    }
+    .gear div:first-child {
+        margin-right: 0;
+    }
+}
+.gear-title {
+    margin-right: 0.5em;
+}
+.gear-since {
+    color: grey;
+    font-size: 0.9em;
+}
+.gear table {
+    width: 100%;
+}
+
+.gear table th.km,
+.gear table td.km {
+}
+table th:first-child,
+table td:first-child {
+    text-align: left;
+}
+
+table td:nth-child(2),
+table td:nth-child(3) {
+    font-weight: bold;
+}
+
+.rides td {
+    padding-right: 1em;
+}
+
+
+.map-btn {
+    padding: 10px;
+    margin-bottom: 0;
+}
+.icon--map-marker {
+    width: 18px;
+    height: 18px;
+    color: green;
+}
+#map-container {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+}
+
+#map-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+#map-header > div {
+    margin-right: 1em;
+}
+
+
+.month-pagination {
+    display: flex;
+}
+.link-prev {
+    margin-right: 1em;
+}
+.link-next {
+    margin-left: 1em;
+}
+
+
+.last-ride {
+    margin: 1em 0;
+    padding: 1em;
+    background-color: yellow;
+}
+
+ul li {
+    list-style: none;
+}
+
+
+
+.bins {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    color: white;
+}
+.bin {
+    padding: 0 0.4em;
+    margin: 0.1em;
+}
+.bin-0 {
+    background-color: #49adad;
+}
+.bin-1 {
+    background-color: #cc5a43;
+}
+.bin-2 {
+    background-color: #6ca74d;
+}
+.bin-3 {
+    background-color: #8d70c9;
+}
+.bin-4 {
+    background-color: #b68f40;
+}
+.bin-5 {
+    background-color: #c8588c;
+}
+     

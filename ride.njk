@@ -1,0 +1,145 @@
+---
+---
+{% extends "base.njk" %}
+
+{% block content %}
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<div id="map-wrapper">
+  <div id="map-header">
+    <div>
+      <select id="map-url">
+        {% for tile in global.mapTiles %}
+          <option{% if tile.crs %} data-crs="{{ tile.crs }}"{% endif %} data-license="{{ tile.license }}" value="{{ tile.url }}">{{ tile.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Dist.</th>
+            <th>Dur.</th>
+            <th>Avg</th>
+            <th>Asc</th>
+            <th>C°</th>
+          </tr>
+        </thead>
+        <tbody>
+          {%- set s = sessions[0] %}
+          <tr>
+            <td>{{ date }}</td>
+            <td>{{ s.total_distance | round(1) }}</td>
+            <td>{{ s.total_timer_time | durationToStr }}</td>
+            <td>{{ s.avg_speed | round(1) }}</td>
+            <td>+{{ (s.total_ascent * 1000) | round }}</td>
+            <td>{{ s.avg_temperature }}°</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div id="map" style="height: 100%"></div>
+</div>
+
+<div id="map-container" style="width: 100%; height: 500px%;"></div>
+
+<link rel="stylesheet" href="{{ "/css/leaflet.css" | url }}" media="screen"/>
+<link rel="stylesheet" href="{{ "/css/leaflet-distance-marker.css" | url }}" media="screen"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.coordinates@0.1.5/dist/Leaflet.Coordinates-0.1.5.css" integrity="sha256-nzhp5j7BxZkO+IvQtYRCPsG8ebxsg51Qgz1glmRzr34=" crossorigin="anonymous">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js" integrity="sha256-fNoRrwkP2GuYPbNSJmMJOCyfRB2DhPQe0rGTgzRsyso=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.6.2/proj4.min.js" integrity="sha256-ebt1gKsIy6Xbl/EwA1WPYHgEeCrIlpzr+L9DgMiAQZY=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4leaflet/1.0.2/proj4leaflet.min.js" integrity="sha256-IIb6zlGmoYdKMco2DkshWuX5Oz/d4VSFbOG7x0Zamjo=" crossorigin="anonymous"></script>
+
+
+
+
+<script type="text/javascript">
+  var mapLicenses = {};
+  {% for key,val in global.mapLicenses %}
+    mapLicenses.{{ key }} = '{{ val | safe }}';
+  {% endfor %}  
+
+  function getTileData(base, crs, license) {
+    if (crs === "EPSG:3067") {
+      crs = new L.Proj.CRS('EPSG:3067',
+        '+proj=utm +zone=35 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs', {
+        resolutions: [
+          8192, 4096, 2048, 1024, 512, 256, 128,
+	      64, 32, 16, 8, 4, 2, 1, 0.5, 0.25
+        ],
+        origin: [-548576, 8388608],
+        bounds: L.bounds([-548576, 8388608], [1548576, 6291456])
+      });
+    } else {
+      crs: null;
+    }
+    return { 'url': base + '/{z}/{x}/{y}.png', 'crs': crs, 'license': mapLicenses[license] };
+  }
+  
+  $("#map-url").change(function() {
+    initMap();
+  });
+  
+  $("#map-container").show().css("top", $(window).scrollTop());
+  $("#map").css("height", $(window).height()-$("#map-header").height());
+
+  var coords = [
+    {%- for c in coords %}
+      L.latLng({{ c[0] }}, {{ c[1] }}),
+    {%- endfor %}
+  ];
+
+
+  var leafletMap = tileLayer = currentCrs = null;
+
+  function initMap() {
+    var center = zoom = null;
+    if (leafletMap) {
+      center = leafletMap.getCenter();
+      zoom = leafletMap.getZoom();
+  
+      leafletMap.remove();
+      leafletMap = null;
+    }
+    var mapMenu = $("#map-url");
+    var opt = mapMenu.find("option:selected");
+
+    var tileData = getTileData($("#map-url").val(), opt.data("crs"), opt.data("license"));
+    var mapOptions = {};
+    var crsChanged = false;
+    var crsCode = tileData.crs ? tileData.crs.code : null;
+    if (!currentCrs && crsCode) {
+      crsChanged = true;
+    } else if (currentCrs !== crsCode) {
+      crsChanged = true;
+    }
+    currentCrs = crsCode;
+  
+    if (tileData.crs) {
+      mapOptions.crs = tileData.crs;
+    }
+  
+    leafletMap = L.map('map', mapOptions);
+    tileLayer = L.tileLayer(tileData.url, {
+      detectRetina: true,
+      maxZoom: 26,
+      attribution: tileData.license,
+      tileSize: 512,
+      zoomOffset: -1
+    }).addTo(leafletMap);
+  
+    var line = L.polyline(coords, {color: "red", weight: 3, opacity: 0.8, dashArray: "10 10" });
+    leafletMap.fitBounds(line.getBounds());
+    leafletMap.addLayer(line);
+
+    if (center && zoom && !crsChanged) {
+      leafletMap.setView(center, zoom);
+    }
+  }
+
+  initMap();
+  
+</script>
+{% endblock %}

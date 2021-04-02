@@ -1,0 +1,18 @@
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <title>Unstrava</title>
+    {%- set css %}
+      {% include "light.standalone.css" %}
+      {% include "app.css" %}
+    {%- endset %}
+    <style>
+      {% if global.environment === "production" %}
+        {{ css | cssmin | safe }}
+      {% else %}
+        {{ css | safe }}
+      {% endif %}
+    </style>
+  </head>
